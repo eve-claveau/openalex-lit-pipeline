@@ -1,9 +1,8 @@
 # Processus lors du roulement de plusieurs itérations
 L'utilisateur appelle le script en roulant:
 ```shell
-sbatch submit_job.sh <nombre_diterations>
+sbatch submit_job.sh -i <trajectoire vers le fichier csv avec articles de base> -n <nombre d'iterations> -oa <trajectoire vers le dossier avec les tableaux de openalex en format parquet>
 ```
-Les articles de base se trouvent dans le dossier reseaux_filtres, sous le nom "reseau0.csv".
 
 Premièrement le script query.R roulera sur les articles de base et sortira le premier réseau de citations ("reseau1.csv"), dans le dossier reseaux_entiers. Ce fichier est ensuite copié dans le dossier "Data_storage" sous le nom "file_1.csv", pour faire passer les articles dans la classification LLM. 
 
