@@ -1,0 +1,11 @@
+*.csv
+*.csv.gz
+*.rds
+duckdb_temp/
+.ollama/
+slurm-*.out
+*.parquet
+*.zip
+*.out
+.ssh/
+

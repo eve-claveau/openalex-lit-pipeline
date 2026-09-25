@@ -1,0 +1,58 @@
+Lmod Warning:
+-------------------------------------
+The following dependent module(s) are
+not currently loaded: r/4.4.0
+(required by: rstudio-server/4.4)
+-------------------------------------
+
+
+
+
+The following have been reloaded with a version change:
+  1) r/4.4.0 => r/4.3.1
+
+Lmod Warning:
+-------------------------------------
+The following dependent module(s) are
+not currently loaded: r/4.4.0
+(required by: rstudio-server/4.4)
+-------------------------------------
+
+
+
+Environment setup done
+Starting iteration 2 with the DuckDB query
+Loading required package: DBI
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:dbplyr’:
+
+    ident, sql, sql_escape_ident, sql_escape_string
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+[1] 0
+[1] 0
+[1] 0
+[1] 9793
+[1] 744034
+[1] 752262
+[1] "Temps de la requête: 928.598"
+DuckDB query done
+Conversion done
+Files reorganized
+Submitted batch job 20069003
+Classification Done
+Error in file(file, "rt") : cannot open the connection
+Calls: read.csv -> read.table -> file
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file 'output_data/classified_file_2.csv': No such file or directory
+Execution halted
