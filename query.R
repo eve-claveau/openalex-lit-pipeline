@@ -13,12 +13,12 @@ dbExecute(con,"PRAGMA temp_directory='/project/def-yacineb/informalite/duckdb_te
 dbExecute(con, "PRAGMA memory_limit='96GB';")
 dbExecute(con, "PRAGMA threads=4;")
 
-input_csv <- paste0("reseaux_filtres/reseau", (num - 1), ".csv")
+input_csv <- Sys.getenv("INPUT_FILE")
 input <- paste0("reseaux_filtres/parquet-files/reseau", (num - 1), ".parquet")
 dbExecute(con, paste0("
   COPY (SELECT * FROM '", input_csv, "') TO '", input, "' (FORMAT PARQUET);
 "))
-
+oa_dir <- Sys.getenv("OPEN_ALEX")
 output <- paste0('reseaux_entiers/parquet-files/reseau', num, '.parquet')
 
 seen_ids_file <- "/project/def-yacineb/informalite/reseaux_entiers/parquet-files/all_seen_ids.parquet"
@@ -41,7 +41,7 @@ sql_time <- system.time({
       -- Les articles du réseau
       cited_by_ids AS (
         SELECT work_id 
-        FROM read_parquet('/project/def-yacineb/openalex_snapshot/parquet-files/works_referenced_works.parquet')
+        FROM read_parquet('", oa_dir ,"' || '/works_referenced_works.parquet')
         WHERE referenced_work_id IN (
           SELECT id
           FROM read_parquet('", input , "')
@@ -55,7 +55,7 @@ sql_time <- system.time({
  
      citing_ids AS (
         SELECT referenced_work_id AS work_id
-        FROM read_parquet('/project/def-yacineb/openalex_snapshot/parquet-files/works_referenced_works.parquet')
+        FROM read_parquet('", oa_dir ,"' || '/works_referenced_works.parquet')
         WHERE work_id IN (
           SELECT id
           FROM read_parquet('", input , "')
@@ -79,7 +79,7 @@ sql_time <- system.time({
           ref.referenced_work_id AS target_work_id,
           -- cited_by sous format liste
           LIST(ref.work_id) AS cited_by
-          FROM read_parquet('/project/def-yacineb/openalex_snapshot/parquet-files/works_referenced_works.parquet') ref
+          FROM read_parquet('", oa_dir ,"' || 'works_referenced_works.parquet') ref
           -- joindre la liste cités par seulement sur les articles qui nous concernent
           JOIN combined_ids c 
           ON ref.referenced_work_id = c.work_id
@@ -112,21 +112,21 @@ sql_time <- system.time({
         }) AS authorships
         
       FROM combined_ids c
-      JOIN read_parquet('/project/def-yacineb/openalex_snapshot/parquet-files/works.parquet') w
+      JOIN read_parquet('", oa_dir ,"' || '/works.parquet') w
         ON c.work_id = w.id
      -- LEFT JOIN citations_lists cl
         -- ON w.id = cl.target_work_id
-      LEFT JOIN read_parquet('/project/def-yacineb/openalex_snapshot/parquet-files/works_primary_locations.parquet') ploc
+      LEFT JOIN read_parquet('", oa_dir ,"' || '/works_primary_locations.parquet') ploc
         ON w.id = ploc.work_id
-      LEFT JOIN read_parquet('/project/def-yacineb/openalex_snapshot/parquet-files/sources.parquet') s
+      LEFT JOIN read_parquet('", oa_dir ,"' || '/sources.parquet') s
         ON ploc.source_id = s.id
         
       -- pour authorships
-      LEFT JOIN read_parquet('/project/def-yacineb/openalex_snapshot/parquet-files/works_authorships.parquet') wa
+      LEFT JOIN read_parquet('", oa_dir ,"' || '/works_authorships.parquet') wa
         ON w.id = wa.work_id
-      LEFT JOIN read_parquet('/project/def-yacineb/openalex_snapshot/parquet-files/authors.parquet') a
+      LEFT JOIN read_parquet('", oa_dir ,"' || '/authors.parquet') a
         ON wa.author_id = a.id
-      LEFT JOIN read_parquet('/project/def-yacineb/openalex_snapshot/parquet-files/institutions.parquet') i
+      LEFT JOIN read_parquet('", oa_dir ,"' || '/institutions.parquet') i
         ON wa.institution_id = i.id
         
       -- grouper au niveau des travaux

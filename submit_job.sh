@@ -66,6 +66,12 @@ set -e
 for ((i=1; i<=NUM_ITERATIONS; i++))
 do 
     echo "Starting iteration ${i} with the DuckDB query"
+
+    # le fichier input de la requete de reseau change a chaque iteration
+    if [[ $i -ne 1 ]]; then
+        INPUT_FILE="reseaux_filtres/reseau{$i - 1}.csv"
+        export INPUT_FILE
+    fi
     # les scripts prennent le numero de l'iteration en input
     Rscript query.R $i #duckdb query
     echo "DuckDB query done"
