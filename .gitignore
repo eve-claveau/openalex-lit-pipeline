@@ -8,4 +8,5 @@ slurm-*.out
 *.zip
 *.out
 .ssh/
+/logs
 

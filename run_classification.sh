@@ -5,8 +5,8 @@
 #SBATCH --gres=gpu:h100:1
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=80G
-#SBATCH --output=slurm-%j.out
-#SBATCH --error=slurm-%j.out
+#SBATCH --output=logs/classification-%j.out
+#SBATCH --error=logs/classification-%j.out
 
 set -e
 start_time=$(date +%s)

@@ -3,7 +3,8 @@
 #SBATCH --time=72:00:00           
 #SBATCH --mem=128G                 
 #SBATCH --cpus-per-task=4         
-#SBATCH --output=query_log.txt    
+#SBATCH --output=logs/iteration_log_%j.out   
+#SBATCH --error=logs/iteration_log_%j.out 
 
 # Script d'execution d'une requête de réseau de citations
 # Prends 1 argument: le nombre d'iterations a executer
