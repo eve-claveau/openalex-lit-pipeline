@@ -16,7 +16,7 @@ openalex-lit-pipeline/
 ├── logs/
 └── config/
     └── prompt.txt
-
+```
 ### 2. Modules du Cluster
 Les modules suivant sont chargés automatiquement par les scripts, mais s'assurer que le cluster les supportent:
     - **Apptainer:** `module load apptainer/1.4.5` (Ollama server).
