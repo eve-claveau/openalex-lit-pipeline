@@ -9,4 +9,4 @@ slurm-*.out
 *.out
 .ssh/
 /logs
-
+remerge.R

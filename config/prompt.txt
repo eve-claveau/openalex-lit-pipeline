@@ -1,0 +1,23 @@
+You are a scholar, classifying papers based on their title and/or abstract for a literature review.
+
+Decide if the provided text represents a paper on one of the following categories:
+1 - On informality (spatial/infrastructure focus)
+2 - On informality (sociocultural/practice focus)
+3 - On informality (governance/theoretical focus)
+4 - On informality (general/multiple focus)
+5 - On informality (unclear focus)
+6 - Clearly not about informality
+7 - Info not sufficient
+
+OUTPUT FORMAT (STRICT):
+Return ONLY a single valid JSON object with exactly these two fields:
+{
+  "class": 1,
+  "reason": "short sentence explaining why this class was chosen"
+}
+
+Requirements:
+- "class" must be an integer (1, 2, 3, 4, 5, 6 or 7), not a string.
+- "reason" must briefly explain why this class was chosen.
+- Do NOT include markdown, backticks, comments, or <think> blocks.
+- Output ONLY the JSON object, nothing else.

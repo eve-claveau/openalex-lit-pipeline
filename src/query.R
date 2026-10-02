@@ -6,22 +6,25 @@ library(duckdb)
 library(dbplyr)
 library(dplyr)
 library(stringr)
-
+wd = dirname(getwd())
+gp_dir = dirname(dirname(getwd()))
+data_dir = file.path(gp_dir, "/data/")
+tmp_dir = file.path(wd, "/duckdb_temp")
 con <- dbConnect(duckdb::duckdb())
-dir.create("/project/def-yacineb/informalite/duckdb_temp", showWarnings = FALSE)
-dbExecute(con,"PRAGMA temp_directory='/project/def-yacineb/informalite/duckdb_temp';")
+dir.create(tmp_dir, showWarnings = FALSE)
+dbExecute(con,"PRAGMA temp_directory='", tmp_dir, "';")
 dbExecute(con, "PRAGMA memory_limit='96GB';")
 dbExecute(con, "PRAGMA threads=4;")
 
 input_csv <- Sys.getenv("INPUT_FILE")
-input <- paste0("reseaux_filtres/parquet-files/reseau", (num - 1), ".parquet")
+input <- paste0(data_dir, "reseaux_filtres/parquet-files/reseau", (num - 1), ".parquet")
 dbExecute(con, paste0("
   COPY (SELECT * FROM '", input_csv, "') TO '", input, "' (FORMAT PARQUET);
 "))
 oa_dir <- Sys.getenv("OPEN_ALEX")
-output <- paste0('reseaux_entiers/parquet-files/reseau', num, '.parquet')
+output <- paste0(data_dir, 'reseaux_entiers/parquet-files/reseau', num, '.parquet')
 
-seen_ids_file <- "/project/def-yacineb/informalite/reseaux_entiers/parquet-files/all_seen_ids.parquet"
+seen_ids_file <- paste0(data_dir, "reseaux_entiers/parquet-files/all_seen_ids.parquet")
 # dependament de si cest la premiere iteration, approches differentes pour eviter les duplications
 if (num < 2) {
   avoiding <- input
@@ -148,7 +151,7 @@ sql_time <- system.time({
   "))
 })
 
-csv_output <- paste0('reseaux_entiers/temp_reseau', num, '.csv')
+csv_output <- paste0(data_dir, 'reseaux_entiers/temp_reseau', num, '.csv')
 
 # 2. Safely glue the SQL together using paste0()
 dbExecute(con, paste0("
