@@ -10,3 +10,4 @@ slurm-*.out
 .ssh/
 /logs
 remerge.R
+*.sif

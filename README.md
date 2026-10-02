@@ -17,3 +17,35 @@ Pour obtenir le réseau périphérique, combiner les fichiers de reseaux_entiers
 
 # En cas d'interuption d'une tâche
 
+
+## Prérequis
+Pour faire rouler les itérations sur les services de l'Alliance Numérique du Canada, le set-up suivant est requis:
+
+### 1. Structure de fichiers
+```text
+openalex-lit-pipeline/
+├── data/
+├── src/
+|   ├── prompt_codes/
+|   ├── convert_abstract.py
+|   ├── filter_by_label.R
+|   ├── query.R
+|   ├── submit_job.sh
+|   ├── run_classification.sh
+|   └── ollama_env.sif
+├── logs/
+└── config/
+    └── prompt.txt
+
+### 2. Modules du Cluster
+Les modules suivant sont chargés automatiquement par les scripts, mais s'assurer que le cluster les supportent:
+    - **Apptainer:** `module load apptainer/1.4.5` (Ollama server).
+    - **Python Stack:** `module load scipy-stack` ( Python 3, Pandas, NumPy).
+
+### 3. Environnement R
+Le script pour le réseau de citations requiert R avec les packages suivants:
+    - `duckdb`(pour le SQL sur fichiers .parquet)
+    - `DBI`(Database Interface)
+
+### 4. Apptainer pour Ollama
+La classification LLM roule à l'intérieur d'un apptainer personnalisé (installé automatiquemnt à travers le fichier <ollama_env.def>(ollama_env.def)).

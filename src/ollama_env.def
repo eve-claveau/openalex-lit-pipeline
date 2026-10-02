@@ -1,0 +1,13 @@
+Bootstrap: docker
+From: ollama/ollama:latest
+
+%post
+    # Prevent interactive prompts from stalling the build
+    export DEBIAN_FRONTEND=noninteractive
+    
+    # Update the container's OS and install Python and pip
+    apt-get update -y
+    apt-get install -y python3 python3-pip
+    
+    # Install your required Python libraries directly into the container
+    pip3 install ollama pandas --break-system-packages

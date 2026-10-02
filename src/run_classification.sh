@@ -27,9 +27,16 @@ export OLLAMA_MODELS="$SLURM_TMPDIR/.ollama"
 export OLLAMA_KEEP_ALIVE="60m"
 export PYTHONUNBUFFERED=1
 
+export PROMPT_FILE="$REPO_ROOT/config/prompt.txt"
+
 # Validation des variables obligatoires
 if [ -z "$INPUT_FILE" ] || [ -z "$NUM_ITERATIONS" ] || [ -z "$OPEN_ALEX" ]; then
     echo "ERROR: Missing environment variables. Please set INPUT_FILE, NUM_ITERATIONS, and OPEN_ALEX."
+    exit 1
+fi
+
+if [ ! -f "PROMPT_FILE" ]; then
+    echo "ERROR: Prompt file not found at $PROMPT_FILE"
     exit 1
 fi
 
@@ -119,12 +126,15 @@ cd "$SRC_DIR"
 echo "Working directory: $(pwd)"
 echo "Running: python LLM_classification_informalite.py"
 echo ""
+export INPUT_FILE="../data/reseaux_entiers/reseau${ITERATION}.csv"
+export OUTPUT_FILE="../data/output_data/classified_file_${ITERATION}.csv"
 
 apptainer exec --cleanenv \
   --env CLASSIFIER_MODELS="$CLASSIFIER_MODELS" \
   --env INPUT_FILE="$INPUT_FILE" \
   --env NUM_ITERATIONS="$NUM_ITERATIONS" \
   --env OPEN_ALEX="$OPEN_ALEX" \
+  --env PROMPT_FILE="$PROMPT_FILE" \
   --bind /localscratch,/scratch,/project \
   --nv "$OLLAMA_SIF" python3 -u LLM_classification_informalite.py
 
