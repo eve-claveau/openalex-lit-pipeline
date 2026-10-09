@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=Classification_LLM
-#SBATCH --time=72:00:00
+#SBATCH --time=12:00:00
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=80G
-#SBATCH --output=../logs/classification-%j.out # Les logs remonteront au dossier parent
-#SBATCH --error=../logs/classification-%j.out
+#SBATCH --output=../logs/classification-%A_%a.out # Les logs remonteront au dossier parent
+#SBATCH --error=../logs/classification-%A_%a.out
 
 set -e
 start_time=$(date +%s)
@@ -35,7 +35,7 @@ if [ -z "$INPUT_FILE" ] || [ -z "$NUM_ITERATIONS" ] || [ -z "$OPEN_ALEX" ]; then
     exit 1
 fi
 
-if [ ! -f "PROMPT_FILE" ]; then
+if [ ! -f "$PROMPT_FILE" ]; then
     echo "ERROR: Prompt file not found at $PROMPT_FILE"
     exit 1
 fi
@@ -126,8 +126,11 @@ cd "$SRC_DIR"
 echo "Working directory: $(pwd)"
 echo "Running: python LLM_classification_informalite.py"
 echo ""
-export INPUT_FILE="../data/reseaux_entiers/reseau${ITERATION}.csv"
-export OUTPUT_FILE="../data/output_data/classified_file_${ITERATION}.csv"
+
+PART_ID=$(printf "%03d" $((SLURM_ARRAY_TASK_ID - 1)))
+
+export INPUT_FILE="../data/reseaux_entiers/reseau${ITERATION}_part_${PART_ID}.csv"
+export OUTPUT_FILE="../data/output_data/classified_file_${ITERATION}_part_${PART_ID}.csv"
 
 apptainer exec --cleanenv \
   --env CLASSIFIER_MODELS="$CLASSIFIER_MODELS" \

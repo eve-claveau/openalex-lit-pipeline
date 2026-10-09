@@ -62,6 +62,7 @@ mkdir -p "data/reseaux_entiers/parquet-files"
 mkdir -p "data/reseaux_filtres/parquet-files"
 echo "Environment setup done"
 
+# Iteration Loop
 set -e
 for ((i=1; i<=NUM_ITERATIONS; i++))
 do 
@@ -80,10 +81,36 @@ do
     rm "reseaux_entiers/temp_reseau${i}.csv"
     cp "reseaux_entiers/reseau${i}.csv" "Data_storage/file_${i}.csv"
     echo "Files reorganized"
-    sbatch --wait run_classification.sh # tache de classification
-    echo "Classification Done"
+
+    # splitting file into chunks
+    echo "Splitting file for batch classification"
+    BATCH_SIZE=10000 # 10000 per classification batch
+    # heading
+    head -n 1 "reseaux_entiers/reseau${i}.csv" > "reseaux_entiers/header.csv"
+    tail -n +2 "reseaux_entiers/reseau${i}.csv" | split -l $BATCH_SIZE -d -a 3 -"reseaux_entiers/reseau${i}_part_" # with output prefix here
+    NUM_CHUNKS=0
+
+    # add header to each
+    for file in reseaux_entiers/reseau${i}_part_*; do
+        cat "reseaux_entiers/header.csv" "$file" > "${file}_tmp.csv"
+        mv "${file}_tmp.csv" "$file"
+        NUM_CHUNKS=$((NUM_CHUNKS + 1))
+    done
+    rm "reseaux_entiers/header.csv"
+    echo "File split into $NUM_CHUNKS chunks"
+
+    # Run array job for classification
+    sbatch --wait --array=1-$NUM_CHUNKS run_classification.sh
+    echo "Classification Array Done"
+
+    # Merge classification results
+    echo "Merging classified batches"
+    # header
+    head -n 1 "output_data/classified_file_${i}_part_000.csv" > "output_data/classified_file_${i}.csv"
+    # content of the rest
+    tail -n +2 -q output_data/classified_file_${i}_part_000.csv" > "output_data/classified_file_${i}.csv"
     Rscript filter_by_label.R $i         # filtrage des articles pertinents
-    echo "Iteration ${i} done"
+    echo "Filter by classification label done. Iteration ${i} done"
 done
 
 head -1 ../data/reseaux_filtres/file1.csv > ../data/reseaux_filtres/combined.csv && tail -n +2 -q ../data/resaux_filtres/*.csv >> ../data/reseaux_filtres/combined.csv
