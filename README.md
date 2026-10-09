@@ -66,6 +66,10 @@ Le progrès des iterations se trouvera dans:
 Ceux de chaque classification dans:
 `logs/classification-%j.out`
 
+Si une tâche est arrêtée avant la fin de toutes les itérations, la resoumettre avec la même commande reprendra le processus où il avait été interrompu:
+```shell
+sbatch src/submit_job.sh -i <trajectoire vers le fichier csv avec articles de base> -n <nombre d'iterations> -oa <trajectoire vers le dossier avec les tableaux de openalex en format parquet>
+```
 
 
 
