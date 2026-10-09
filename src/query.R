@@ -15,7 +15,7 @@ tmp_dir <- file.path(repo_root, "duckdb_temp")
 
 con <- dbConnect(duckdb::duckdb())
 dir.create(tmp_dir, showWarnings = FALSE)
-dbExecute(con,"PRAGMA temp_directory='", tmp_dir, "';")
+dbExecute(con,paste0("PRAGMA temp_directory='", tmp_dir, "';"))
 dbExecute(con, "PRAGMA memory_limit='96GB';")
 dbExecute(con, "PRAGMA threads=4;")
 
@@ -61,7 +61,7 @@ sql_time <- system.time({
  
      citing_ids AS (
         SELECT referenced_work_id AS work_id
-        FROM read_parquet('", oa_dir ,"' || '/works_referenced_works.parquet')
+        FROM read_parquet('", paste0(oa_dir, "/works_referenced_works.parquet"), "')
         WHERE work_id IN (
           SELECT id
           FROM read_parquet('", input , "')

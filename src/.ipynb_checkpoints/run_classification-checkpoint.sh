@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=Classification_LLM
 #SBATCH --time=3:00:00
-#SBATCH --gres=gpu:a100:1
+#SBATCH --gres=gpu:h100:1
 #SBATCH --cpus-per-task=16
-#SBATCH --mem=40G
+#SBATCH --mem=80G
 #SBATCH --output=../logs/classification-%A_%a.out # Les logs remonteront au dossier parent
 #SBATCH --error=../logs/classification-%A_%a.out
 
