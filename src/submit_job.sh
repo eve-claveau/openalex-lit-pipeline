@@ -12,7 +12,7 @@ source /project/def-yacineb/openalex_snapshot/data_env/bin/activate
 module load r/4.3.1          
 module load scipy-stack
 PARENT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-INPUT_FILE=""
+INPUT_FILE="" 
 NUM_ITERATIONS=""
 OPEN_ALEX=""
 
@@ -59,7 +59,8 @@ export OPEN_ALEX
 
 mkdir -p "data/reseaux_entiers"
 mkdir -p "data/reseaux_entiers/parquet-files"
-mkdir -p "data/reseaux_filtres/parquet-files"
+mkdir -p "data/reseaux_filtres/parquet-files"    
+mkdir -p "data/reseaux_peripheriques
 echo "Environment setup done"
 
 # Iteration Loop
@@ -70,7 +71,7 @@ do
     export ITERATION=$i
     # le fichier input de la requete de reseau change a chaque iteration
     if [[ $i -ne 1 ]]; then
-        INPUT_FILE="reseaux_filtres/reseau{$i - 1}.csv"
+        INPUT_FILE="reseaux_filtres/reseau{$i - 1}.csv" 
         export INPUT_FILE
     fi
     # les scripts prennent le numero de l'iteration en input
@@ -110,9 +111,25 @@ do
     # content of the rest
     tail -n +2 -q output_data/classified_file_${i}_part_000.csv" > "output_data/classified_file_${i}.csv"
     Rscript filter_by_label.R $i         # filtrage des articles pertinents
-    echo "Filter by classification label done. Iteration ${i} done"
+    echo "Filter by classification label done.Iteration ${i} done"
 done
 
-head -1 ../data/reseaux_filtres/file1.csv > ../data/reseaux_filtres/combined.csv && tail -n +2 -q ../data/resaux_filtres/*.csv >> ../data/reseaux_filtres/combined.csv
+echo "All iterations done"
+echo "Combining networks"
 
-echo "All done. Final output is in reseaux_filtres/combined.csv"
+# reseau filtre
+head -n 1 "data/reseaux_filtres/reseau1.csv" > "data/reseaux_filtres/combined.csv"
+tail -n +2 -q data/reseaux_filtres/reseau*.csv >> "data/reseaux_filtres/combined.csv"
+
+# reseau peripherique
+head -n 1 "data/reseaux_peripheriques/reseau1.csv" > "data/reseaux_peripheriques/combined_peripherique.csv"
+tail -n +2 -q data/reseaux_peripheriques/reseau*.csv >> "data/reseaux_peripheriques/combined_peripherique.csv"
+
+# reseau entier
+head -n 1 "data/reseaux_entiers/reseau1.csv" > "data/reseaux_entiers/combined_entiers.csv"
+tail -n +2 -q data/reseaux_entiers/reseau*.csv >> "data/reseaux_entiers/combined_entiers.csv"
+
+echo "All done."
+echo "- Final filtered output: data/reseaux_filtres/combined.csv"
+echo "- Final peripheral output: data/reseaux_peripheriques/combined_peripherique.csv"
+echo "- Final full network: data/reseaux_entiers/combined_entiers.csv"

@@ -17,8 +17,9 @@ label_col <- names(data)[grepl("_label$", names(data))]
 # filter is replaced by base R subsetting
 # Using which() safely drops any NA values, matching dplyr::filter behavior
 filtered_data <- data[which(data[[label_col]] < 6), ]
+peripheral_data <- data[which(data[label_col]) >= 6), ]
 
 # write_csv is replaced by write.csv (row.names = FALSE prevents adding an index column)
 write.csv(filtered_data, output_file, row.names = FALSE)
-
+write.csv(peripheral_data, paste0("data/reseaux_peripheriques/reseau", num ".csv", row.names = FALSE))
 cat("Filtrage terminé :", nrow(filtered_data), "lignes conservées et sauvegardées dans", output_file, "\n")
