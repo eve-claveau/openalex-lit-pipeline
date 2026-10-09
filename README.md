@@ -17,9 +17,11 @@ openalex-lit-pipeline/
 └── config/
     └── prompt.txt
 ```
+Le fichier config/prompt.txt contient le prompt utilisé pour la classification, à personnaliser au besoin.
+
 ### 2. Modules du Cluster
-Les modules suivant sont chargés automatiquement par les scripts, mais s'assurer que le cluster les supportent:
-    - **Apptainer:** `module load apptainer/1.4.5` (Ollama server).
+Les modules suivants sont chargés automatiquement par les scripts, mais s'assurer que le cluster les supportent:
+    - **Apptainer:** `module load apptainer/1.4.5` (Ollama server).  
     - **Python Stack:** `module load scipy-stack` ( Python 3, Pandas, NumPy).
 
 ### 3. Environnement R
@@ -57,3 +59,16 @@ Le réseau complet final est obtenu en combinant les reseaux_filtres, sous le no
 Pour obtenir le réseau périphérique, combiner les fichiers de reseaux_entiers, en excluant ceux de reseaux_filtres.
 
 ## En cas d'interuption d'une tâche
+Sur un très grand corpus, il arrive souvent que la classification soit interompue en milieu de tâche.  
+Le progrès des iterations se trouvera dans:
+logs/iteration_log_%j.out (où %j est l'identifiant de la tâche)
+
+Ceux de chaque classification dans:
+logs/classification-%j.out
+
+
+
+
+
+
+
